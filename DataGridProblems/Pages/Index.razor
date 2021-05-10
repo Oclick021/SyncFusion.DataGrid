@@ -1,0 +1,115 @@
+﻿@page "/"
+
+<div>
+    <button @onclick="PopulateTable">1. Populate table</button>
+    @if (People.Count > 0)
+    {
+        <button @onclick="MakeSelectable">2. Selectable</button>
+    }
+    @if (isSelectable)
+    {
+        <button @onclick="MakeSelectable">3. UnSelectable</button>
+    }
+</div>
+
+
+    <div>
+        <h1>Total people : @People.Count</h1>
+    </div>
+
+    <SfGrid AllowSorting="true" @ref="sfGrid" Width="1000" AllowPaging="true" DataSource="@People">
+
+        <GridPageSettings PageSizes="@(new int[] {5,10,15,20,25,50,150 })" PageSize="15">
+
+        </GridPageSettings>
+
+
+
+        @if (isSelectable)
+        {
+            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" EnableToggle="true" Type="Syncfusion.Blazor.Grids.SelectionType.Multiple"></GridSelectionSettings>
+        }
+
+
+        <GridColumns>
+
+            @{
+
+                <GridColumn IsIdentity="true" Width="15" AutoFit="true" TextAlign="TextAlign.Center" Type="ColumnType.CheckBox" Visible="isSelectable" />
+
+                <GridColumn Field="@nameof(Person.ID)" IsPrimaryKey="true" HeaderText="Id"></GridColumn>
+                <GridColumn Field="@nameof(Person.Name)" HeaderText="Name"></GridColumn>
+                <GridColumn Field="@nameof(Person.Email)" HeaderText="Email"></GridColumn>
+
+            }
+
+        </GridColumns>
+    </SfGrid>
+
+    @code{
+
+        SfGrid<Person> sfGrid;
+        bool isSelectable = false;
+        List<Person> People = new List<Person>();
+
+        void PopulateTable()
+        {
+            People.Add(new Person()
+            {
+                ID = 1,
+                Name = "John",
+                Email = "John@mail.com"
+            });
+
+            People.Add(new Person()
+            {
+                ID = 1,
+                Name = "David",
+                Email = "David@mail.com"
+            });
+
+            People.Add(new Person()
+            {
+                ID = 1,
+                Name = "Mat",
+                Email = "Mat@mail.com"
+            });
+
+            People.Add(new Person()
+            {
+                ID = 1,
+                Name = "Rose",
+                Email = "Rose@mail.com"
+            });
+
+            People.Add(new Person()
+            {
+                ID = 1,
+                Name = "Chuck Noris",
+                Email = "mail@chucknoris.com"
+            });
+            sfGrid.Refresh();
+            StateHasChanged();
+        }
+
+        void MakeSelectable()
+        {
+            isSelectable = true;
+            sfGrid.Refresh();
+
+        }
+        void MakeUnSelectable()
+        {
+            isSelectable = false;
+            sfGrid.RefreshColumns(); //this doesnt change the state of columns. 
+            sfGrid.Refresh();
+
+        }
+
+        public class Person
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+            public string Email { get; set; }
+        }
+    }
